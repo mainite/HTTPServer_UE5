@@ -7,26 +7,23 @@
 void UServerClass::BeginHttpServer(int32 Port, FString route, UServerClass*& HttpServer)
 {	
 
-	static bool bExecuted = false;
+	UE_LOG(LogTemp, Warning, TEXT("Server Listen......"));
+ 	HttpServer = NewObject<UServerClass>();
 
-	if (!bExecuted)
+
+
+	static HttpCore* TempClass = nullptr;
+	if (TempClass)
 	{
-
-		UE_LOG(LogTemp, Warning, TEXT("Server Listen......"));
-		HttpServer = NewObject<UServerClass>();
-
-		HttpCore* TempClass = new HttpCore;
-		TempClass->StartServer(Port, TCHAR_TO_UTF8(*route));
-
-
-		//将this传递到core类里
-		TempClass->SetServerClass(HttpServer);
-
-		bExecuted = true;
+		TempClass->StopServer();
+		delete TempClass;
 	}
-	else {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Do Onse"));
-	}
+	TempClass = new HttpCore;
+	TempClass->StartServer(Port, "/test");
+	
+
+	//将this传递到core类里
+	TempClass->SetServerClass(HttpServer);
 
 	
 }
